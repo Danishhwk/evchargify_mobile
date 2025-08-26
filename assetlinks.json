@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.evchargify",
+      "sha256_cert_fingerprints": [
+        "29:24:79:D6:62:CD:FA:9A:2A:A7:9E:F3:64:18:99:8C:1B:A7:82:D1:4C:36:6C:27:71:28:7F:35:D6:76:58:C9"
+      ]
+    }
+  }
+]

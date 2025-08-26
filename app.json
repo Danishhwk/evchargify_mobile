@@ -1,0 +1,9 @@
+{
+  "name": "ev_dock",
+  "displayName": "ev_dock",
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-8848421759163585~5060595883",
+    "ios_app_id": "ca-app-pub-8848421759163585~1353332894",
+    "user_tracking_usage_description": "This identifier will be used to deliver personalized ads to you."
+  }
+}

@@ -1,0 +1,62 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.CAMERA" />
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+  <uses-permission android:name="android.permission.VIBRATE" />
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+  <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+  <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+  <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+  <uses-feature android:name="android.hardware.camera" android:required="false" />
+  <uses-feature android:name="android.hardware.camera.front" android:required="false" />
+
+  <application
+    android:name=".MainApplication"
+    android:label="@string/app_name"
+    android:icon="@mipmap/ic_launcher"
+    android:roundIcon="@mipmap/ic_launcher"
+    android:allowBackup="false"
+    android:usesCleartextTraffic="true"
+    android:theme="@style/Theme.App.Starting">
+
+    <!-- Main Activity -->
+    <activity android:name=".MainActivity"
+      android:label="@string/app_name"
+      android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+      android:launchMode="singleTask"
+      android:windowSoftInputMode="adjustResize"
+      android:exported="true">
+
+      <!-- Main Launch Intent -->
+      <intent-filter android:autoVerify="true">
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+
+      <!-- Handle Custom Scheme (evdock://) -->
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="evdock" />
+      </intent-filter>
+
+      <!-- Handle App Link for https://tritanev.com -->
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="http" />
+        <data android:scheme="https" android:host="tritanev.com" android:pathPrefix="/app" />
+      </intent-filter>
+
+    </activity>
+
+    <!-- Add other services and meta-data here, such as Google Maps API key, etc. -->
+    <meta-data android:name="com.google.android.geo.API_KEY"
+      android:value="AIzaSyAoQcmB0_9XwBUcf3vQKi3bMfYrVIX9HU8" />
+  </application>
+</manifest>

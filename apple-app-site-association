@@ -1,0 +1,18 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "4BJX3SA6C2.app.evdock.evdock",
+        "paths": [
+          "*"
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": [
+      "4BJX3SA6C2.app.evdock.evdock"
+    ]
+  }
+}
