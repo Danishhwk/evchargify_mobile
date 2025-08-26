@@ -358,7 +358,7 @@ export default function RegisterOtpScreen({navigation, route}) {
           tintColor={'#6BB14F'}
           textInputStyle={{
             borderWidth: 2,
-
+            backgroundColor: '#F6F6F6',
             elevation: 2,
             borderRadius: 10,
             width: 45,

@@ -39,6 +39,7 @@ export default function RegisterScreen({navigation}) {
   const cameraSheetRef = useRef(null);
   const snapPoints = useMemo(() => ['28%', '28%'], []);
   const [isLoading, setIsLoading] = useState(false);
+  const [isCameraSheetVisible, setIsCameraSheetVisible] = useState(false);
 
   useEffect(() => {
     const checkRegisterAlloFun = async () => {
@@ -227,7 +228,7 @@ export default function RegisterScreen({navigation}) {
 
             <IconButton
               onPress={() => {
-                cameraSheetRef.current.expand();
+                setIsCameraSheetVisible(true);
               }}
               className="w-12 h-12 absolute bottom-0 right-0 mb-2 mr-2"
               icon={() => (
@@ -247,7 +248,7 @@ export default function RegisterScreen({navigation}) {
             </Text>
           </Button>
         </ScrollView>
-        {imageBtmSheet()}
+        {isCameraSheetVisible && imageBtmSheet()}
         {Loading({visible: isLoading})}
       </View>
     </KeyboardAvoidingView>
@@ -256,17 +257,20 @@ export default function RegisterScreen({navigation}) {
   function imageBtmSheet() {
     return (
       <BottomSheet
-        ref={ref => (cameraSheetRef.current = ref)}
+        ref={cameraSheetRef}
         snapPoints={snapPoints}
         enablePanDownToClose
+        onClose={() => {
+          setIsCameraSheetVisible(false);
+        }}
+        index={0}
         backdropComponent={props => (
           <BottomSheetBackdrop
             {...props}
             disappearsOnIndex={-1}
             appearsOnIndex={0}
           />
-        )}
-        index={-1}>
+        )}>
         <View className="flex-row justify-evenly items-center flex-1">
           <TouchableOpacity onPress={cameraPick}>
             <View className="bg-[#6BB14F] w-24 h-24 rounded-full items-center justify-center">
