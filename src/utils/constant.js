@@ -11,7 +11,7 @@ export let introUrl =
 // PAYMENT GATEWAY URL
 export const RazorpayKey = 'rzp_test_R8lQUGiEAkjbOw';
 export const RazorpayTestKey = 'rzp_test_R8lQUGiEAkjbOw';
-export const RazorpayProductionKey = 'rzp_live_sf5LuYV5nXZZif';
+export const RazorpayProductionKey = 'rzp_test_R8lQUGiEAkjbOw';
 
 // export const bannerAdUnitId = isIos
 //   ? 'ca-app-pub-8848421759163585/9364255675'
