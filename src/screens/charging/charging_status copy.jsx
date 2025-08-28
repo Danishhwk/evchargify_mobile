@@ -19,6 +19,7 @@ import {
 } from 'react-native-paper';
 import Animated, {FadeIn, FadeOut} from 'react-native-reanimated';
 import {Toast} from 'react-native-toast-notifications';
+import SwipeButton from 'rn-swipe-button';
 import {images} from '../../assets/images/images';
 import {
   transactionRemoteStopFun,
@@ -55,7 +56,6 @@ export default function ChargingStatus({navigation, route}) {
   const [isRewardEnable, setIsRewardEnable] = useState(false);
   const [transaction_min_unit, setTransaction_min_unit] = useState(0);
   const [stationId, setStationId] = useState(0);
-  const [sessionData, setSessionData] = useState(null);
 
   useForeground(() => {
     isIos && bannerRef.current?.load();
@@ -136,7 +136,6 @@ export default function ChargingStatus({navigation, route}) {
               setIsLoading(false);
               setIsRefreshing(false);
               let sessionData = responseData.data;
-              setSessionData(sessionData);
               console.log('log 1', isDataAvailble);
 
               setIsDataAvailble(true);
@@ -342,12 +341,7 @@ export default function ChargingStatus({navigation, route}) {
         end={{x: 0, y: 0.7}}
         colors={['#6BB14F', '#F8F8F8']}>
         <NetworkStatus />
-        <MyBannerAd
-          height={50}
-          bannerRef={bannerRef}
-          setBannerLoaded={setBannerLoaded}
-          bannerLoaded={bannerLoaded}
-        />
+
         <Appbar className="bg-transparent" mode="center-aligned">
           <IconButton
             icon={() => (
@@ -442,6 +436,7 @@ export default function ChargingStatus({navigation, route}) {
 
           {/* Swipe button */}
           <View className="h-10" />
+          {/* <SwipeToStop onSwipeSuccess={SwipeSuccess} /> */}
 
           {(() => {
             if (!isLoading) {
@@ -592,11 +587,7 @@ export default function ChargingStatus({navigation, route}) {
     );
   }
 
-  function MoneyRender() {
-    const voltage = parseFloat(sessionData?.Voltage || 0);
-    const current = parseFloat(sessionData?.Current || 0);
-    const speed = ((voltage * current) / 1000).toFixed(2);
-
+  function otherCardRender(title) {
     return (
       <Surface
         mode="elevated"
@@ -605,35 +596,10 @@ export default function ChargingStatus({navigation, route}) {
           mode="flat"
           className="w-[90%] bg-[#6BB14F] rounded-lg py-1 items-center justify-center">
           <Text className="text-white text-lg py-1" variant="titleMedium">
-            Money
+            {title}
           </Text>
         </Surface>
-
-        <View className="w-[90%] items-center mt-2">
-          <Text className="text-base" variant="bodyLarge">
-            Charging Speed: {speed} kW
-          </Text>
-        </View>
-
         <View className="flex-wrap flex-row justify-between w-[90%] gap-5 my-2">
-          <View className="items-center w-[40%]">
-            <Text className="text-lg" variant="bodyLarge">
-              {voltage} V
-            </Text>
-            <Text className="text-gray-500" variant="titleMedium">
-              Voltage
-            </Text>
-          </View>
-
-          <View className="items-center w-[40%]">
-            <Text className="text-lg" variant="bodyLarge">
-              {current} A
-            </Text>
-            <Text className="text-gray-500" variant="titleMedium">
-              Current
-            </Text>
-          </View>
-
           <View className="items-center w-[40%]">
             <Text className="text-lg" variant="bodyLarge">
               {charging_time}
@@ -645,22 +611,55 @@ export default function ChargingStatus({navigation, route}) {
 
           <View className="items-center w-[40%]">
             <Text className="text-lg" variant="bodyLarge">
-              {current_kwh} kWh
+              {current_kwh.toString().slice(0, 6)} kWh
             </Text>
             <Text className="text-gray-500" variant="titleMedium">
-              Unit
+              Current kWh
+            </Text>
+          </View>
+        </View>
+      </Surface>
+    );
+  }
+
+  function EnergyRender() {
+    return (
+      <Surface
+        mode="elevated"
+        className="bg-slate-100 rounded-xl p-4 mt-8 items-center shadow-sm shadow-black">
+        <Surface
+          mode="flat"
+          className="w-[90%] bg-[#6BB14F] rounded-lg py-1 items-center justify-center">
+          <Text className="text-white text-lg py-1" variant="titleMedium">
+            Energy
+          </Text>
+        </Surface>
+        <View className="flex-wrap flex-row justify-between w-[90%] gap-5 my-2">
+          <View className="items-center w-[40%]">
+            <Text className="text-lg" variant="bodyLarge">
+              {charging_time}
+            </Text>
+            <Text className="text-gray-500" variant="titleMedium">
+              Charging Time
             </Text>
           </View>
 
           <View className="items-center w-[40%]">
             <Text className="text-lg" variant="bodyLarge">
-              {chargingAmount} /-
+              {current_kwh.toString().slice(0, 6)} kWh
             </Text>
             <Text className="text-gray-500" variant="titleMedium">
-              Requested Amount
+              Current kWh
             </Text>
           </View>
-
+          <View className="items-center w-[40%]">
+            <Text className="text-lg" variant="bodyLarge">
+              {chargingAmount} kWh
+            </Text>
+            <Text className="text-gray-500" variant="titleMedium">
+              Requested Energy
+            </Text>
+          </View>
           <View className="items-center w-[40%]">
             <Text className="text-lg" variant="bodyLarge">
               {blockAmount} /-
@@ -674,11 +673,7 @@ export default function ChargingStatus({navigation, route}) {
     );
   }
 
-  function EnergyRender() {
-    const voltage = parseFloat(sessionData?.Voltage || 0);
-    const current = parseFloat(sessionData?.Current || 0);
-    const speed = ((voltage * current) / 1000).toFixed(2);
-
+  function MoneyRender() {
     return (
       <Surface
         mode="elevated"
@@ -687,35 +682,10 @@ export default function ChargingStatus({navigation, route}) {
           mode="flat"
           className="w-[90%] bg-[#6BB14F] rounded-lg py-1 items-center justify-center">
           <Text className="text-white text-lg py-1" variant="titleMedium">
-            Energy
+            Money
           </Text>
         </Surface>
-
-        <View className="w-[90%] items-center mt-2">
-          <Text className="text-base" variant="bodyLarge">
-            Charging Speed: {speed} kW
-          </Text>
-        </View>
-
         <View className="flex-wrap flex-row justify-between w-[90%] gap-5 my-2">
-          <View className="items-center w-[40%]">
-            <Text className="text-lg" variant="bodyLarge">
-              {voltage} V
-            </Text>
-            <Text className="text-gray-500" variant="titleMedium">
-              Voltage
-            </Text>
-          </View>
-
-          <View className="items-center w-[40%]">
-            <Text className="text-lg" variant="bodyLarge">
-              {current} A
-            </Text>
-            <Text className="text-gray-500" variant="titleMedium">
-              Current
-            </Text>
-          </View>
-
           <View className="items-center w-[40%]">
             <Text className="text-lg" variant="bodyLarge">
               {charging_time}
@@ -730,19 +700,17 @@ export default function ChargingStatus({navigation, route}) {
               {current_kwh} kWh
             </Text>
             <Text className="text-gray-500" variant="titleMedium">
-              Unit
+              Current kWh
             </Text>
           </View>
-
           <View className="items-center w-[40%]">
             <Text className="text-lg" variant="bodyLarge">
-              {chargingAmount} kWh
+              {chargingAmount} /-
             </Text>
             <Text className="text-gray-500" variant="titleMedium">
-              Requested Energy
+              Requested Amount
             </Text>
           </View>
-
           <View className="items-center w-[40%]">
             <Text className="text-lg" variant="bodyLarge">
               {blockAmount} /-
@@ -757,10 +725,6 @@ export default function ChargingStatus({navigation, route}) {
   }
 
   function TimeRender() {
-    const voltage = parseFloat(sessionData?.Voltage || 0);
-    const current = parseFloat(sessionData?.Current || 0);
-    const speed = ((voltage * current) / 1000).toFixed(2);
-
     return (
       <Surface
         mode="elevated"
@@ -772,32 +736,7 @@ export default function ChargingStatus({navigation, route}) {
             Time
           </Text>
         </Surface>
-
-        <View className="w-[90%] items-center mt-2">
-          <Text className="text-base" variant="bodyLarge">
-            Charging Speed: {speed} kW
-          </Text>
-        </View>
-
         <View className="flex-wrap flex-row justify-between w-[90%] gap-5 my-2">
-          <View className="items-center w-[40%]">
-            <Text className="text-lg" variant="bodyLarge">
-              {voltage} V
-            </Text>
-            <Text className="text-gray-500" variant="titleMedium">
-              Voltage
-            </Text>
-          </View>
-
-          <View className="items-center w-[40%]">
-            <Text className="text-lg" variant="bodyLarge">
-              {current} A
-            </Text>
-            <Text className="text-gray-500" variant="titleMedium">
-              Current
-            </Text>
-          </View>
-
           <View className="items-center w-[40%]">
             <Text className="text-lg" variant="bodyLarge">
               {charging_time}
@@ -812,10 +751,9 @@ export default function ChargingStatus({navigation, route}) {
               {current_kwh} kWh
             </Text>
             <Text className="text-gray-500" variant="titleMedium">
-              Unit
+              Current kWh
             </Text>
           </View>
-
           <View className="items-center w-[40%]">
             <Text className="text-lg" variant="bodyLarge">
               {chargingAmount} mins
@@ -824,80 +762,6 @@ export default function ChargingStatus({navigation, route}) {
               Requested Time
             </Text>
           </View>
-
-          <View className="items-center w-[40%]">
-            <Text className="text-lg" variant="bodyLarge">
-              {blockAmount} /-
-            </Text>
-            <Text className="text-gray-500" variant="titleMedium">
-              Block Amount
-            </Text>
-          </View>
-        </View>
-      </Surface>
-    );
-  }
-
-  function otherCardRender() {
-    const voltage = parseFloat(sessionData?.Voltage || 0);
-    const current = parseFloat(sessionData?.Current || 0);
-    const speed = ((voltage * current) / 1000).toFixed(2);
-
-    return (
-      <Surface
-        mode="elevated"
-        className="bg-slate-100 rounded-xl p-4 mt-8 items-center shadow-sm shadow-black">
-        <Surface
-          mode="flat"
-          className="w-[90%] bg-[#6BB14F] rounded-lg py-1 items-center justify-center">
-          <Text className="text-white text-lg py-1" variant="titleMedium">
-            {sessionData.session_type}
-          </Text>
-        </Surface>
-
-        <View className="w-[90%] items-center mt-2">
-          <Text className="text-base" variant="bodyLarge">
-            Charging Speed: {speed} kW
-          </Text>
-        </View>
-
-        <View className="flex-wrap flex-row justify-between w-[90%] gap-5 my-2">
-          <View className="items-center w-[40%]">
-            <Text className="text-lg" variant="bodyLarge">
-              {voltage} V
-            </Text>
-            <Text className="text-gray-500" variant="titleMedium">
-              Voltage
-            </Text>
-          </View>
-
-          <View className="items-center w-[40%]">
-            <Text className="text-lg" variant="bodyLarge">
-              {current} A
-            </Text>
-            <Text className="text-gray-500" variant="titleMedium">
-              Current
-            </Text>
-          </View>
-
-          <View className="items-center w-[40%]">
-            <Text className="text-lg" variant="bodyLarge">
-              {charging_time}
-            </Text>
-            <Text className="text-gray-500" variant="titleMedium">
-              Charging Time
-            </Text>
-          </View>
-
-          <View className="items-center w-[40%]">
-            <Text className="text-lg" variant="bodyLarge">
-              {current_kwh} kWh
-            </Text>
-            <Text className="text-gray-500" variant="titleMedium">
-              Unit
-            </Text>
-          </View>
-
           <View className="items-center w-[40%]">
             <Text className="text-lg" variant="bodyLarge">
               {blockAmount} /-
@@ -940,4 +804,31 @@ export default function ChargingStatus({navigation, route}) {
       </View>
     );
   }
+}
+function SwipeToStop({onSwipeSuccess}) {
+  return (
+    <SwipeButton
+      onSwipeSuccess={onSwipeSuccess}
+      title={
+        <View className="flex-row h-8 items-center self-center justify-between">
+          <Text variant="bodyLarge" className="text-white ml-24">
+            Swipe to Stop
+          </Text>
+          <Image source={images.swipe} className="w-16 h-4 ml-14" />
+        </View>
+      }
+      resetAfterSuccessAnimDuration={1000}
+      shouldResetAfterSuccess={true}
+      thumbIconBackgroundColor="#fff"
+      railBackgroundColor="#6BB14F"
+      titleColor="white"
+      railFillBackgroundColor="#99D9D9"
+      railBorderColor="#6BB14F"
+      thumbIconBorderColor="#6BB14F"
+      railFillBorderColor="#6BB14F"
+      thumbIconComponent={() => (
+        <Image source={images.bolt} className="w-8 h-8" />
+      )}
+    />
+  );
 }

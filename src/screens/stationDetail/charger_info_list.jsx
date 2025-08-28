@@ -4,6 +4,7 @@ import {Button, Card, Divider, Text} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import {images} from '../../assets/images/images';
 import Animated, {FadeInUp} from 'react-native-reanimated';
+import moment from 'moment';
 
 export default function ChargerInfoList({stationInfoData}) {
   const navigation = useNavigation();
@@ -15,6 +16,29 @@ export default function ChargerInfoList({stationInfoData}) {
       const status = chargingAllow == false ? statuscheck : false;
       const statusLabel =
         chargingAllow == false ? item.ocpp_status : 'Maintenance';
+
+      const shouldShowSessionInfo = statusLabel === 'Busy';
+
+      // Assign defaults
+      const SocValue = item.Soc ?? stationInfoData?.Soc ?? 0;
+      const unit = item.cal_energy ?? stationInfoData?.cal_energy ?? 0;
+      const VoltageValue = item.Voltage ?? stationInfoData?.Voltage ?? 0;
+      const CurrentValue = item.Current ?? stationInfoData?.Current ?? 0;
+      const StartTimeValue =
+        item.start_date_time ?? stationInfoData?.start_date_time ?? null;
+
+      const parsedTime = StartTimeValue
+        ? moment(StartTimeValue, 'DD-MM-YYYY HH:mm:ss')
+        : null;
+
+      const formattedStartTime = parsedTime
+        ? parsedTime.format('DD-MM-YYYY hh:mm A')
+        : null;
+
+      const timeAgo = parsedTime ? parsedTime.fromNow() : null;
+
+      const speed = ((VoltageValue * CurrentValue) / 1000).toFixed(2);
+
       return (
         <Card
           key={item.station_charger_connector_id}
@@ -94,6 +118,66 @@ export default function ChargerInfoList({stationInfoData}) {
               Charge Now
             </Text>
           </Button>
+
+          {shouldShowSessionInfo && (
+            <View
+              style={{
+                marginTop: 10,
+                backgroundColor: '#E9EDF5',
+                padding: 10,
+                borderRadius: 8,
+              }}>
+              <Text variant="titleSmall" className="text-[#095587] mb-3">
+                Current charging session info
+              </Text>
+
+              {/* Row 1 */}
+              <View style={styles.row}>
+                <View style={styles.item}>
+                  {/* <Image source={images.socIcon} style={styles.iconSmall} /> */}
+                  <Text variant="labelSmall" className="text-[#095587]">
+                    SOC: {SocValue}%
+                  </Text>
+                </View>
+                <View style={styles.item}>
+                  {/* <Image source={images.energyIcon} style={styles.iconSmall} /> */}
+                  <Text variant="labelSmall" className="text-[#095587]">
+                    Unit: {unit} kWh
+                  </Text>
+                </View>
+                <View style={styles.item}>
+                  {/* <Image source={images.timeIcon} style={styles.iconSmall} /> */}
+                  <Text variant="labelSmall" className="text-[#095587]">
+                    Time: {timeAgo || '--'}
+                  </Text>
+                </View>
+              </View>
+
+              <View style={{height: 10}} />
+
+              {/* Row 2 */}
+              <View style={styles.row}>
+                <View style={styles.item}>
+                  {/* <Image source={images.voltageIcon} style={styles.iconSmall} /> */}
+                  <Text variant="labelSmall" className="text-[#095587]">
+                    Voltage: {VoltageValue} V
+                  </Text>
+                </View>
+                <View style={styles.item}>
+                  {/* <Image source={images.currentIcon} style={styles.iconSmall} /> */}
+                  <Text variant="labelSmall" className="text-[#095587]">
+                    Current: {CurrentValue} A
+                  </Text>
+                </View>
+                <View style={styles.item}>
+                  {/* <Image source={images.speedIcon} style={styles.iconSmall} /> */}
+                  <Text variant="labelSmall" className="text-[#095587]">
+                    Current Charging Speed: {speed} kW
+                  </Text>
+                </View>
+              </View>
+            </View>
+          )}
         </Card>
       );
     },
@@ -202,5 +286,27 @@ const styles = StyleSheet.create({
   powerDetails: {
     flex: 1,
     alignItems: 'flex-end',
+  },
+  infoBox: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: '#E9EDF5',
+    borderRadius: 8,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  item: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  iconSmall: {
+    width: 14,
+    height: 14,
+    marginRight: 4,
+    tintColor: '#095587',
   },
 });

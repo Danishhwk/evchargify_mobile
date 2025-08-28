@@ -36,6 +36,10 @@ import {
   loginOtpFun,
   loginPasswordFun,
   loginSendOtpFun,
+  ProfileOtpService,
+  ProfileSendOtpFun,
+  ProfileUpdateFun,
+  ProfileVerifyOtpFun,
   ReSendOtpService,
 } from '../../services/login_service';
 import {notificationAddService} from '../../services/notification_service';
@@ -62,6 +66,8 @@ export default function LoginScreen({navigation}) {
     mobileNumber: '',
   };
 
+  const [isUpdateMobile, setIsUpdateMobile] = useState(false);
+
   const checkAppUpdate = async () => {
     console.log('checking app update');
 
@@ -79,11 +85,13 @@ export default function LoginScreen({navigation}) {
 
   const passwordValidationSchema = Yup.object({
     mobileNo: Yup.string()
-      .required('Mobile number is required')
-      .matches(
-        /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/,
-        'Invalid mobile number format (10 digits required)',
-      ),
+      .required('Email or Mobile number is required')
+      .test('mobileNo', 'Invalid mobile number or email', value => {
+        const mobileRegex =
+          /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/;
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+        return mobileRegex.test(value) || emailRegex.test(value);
+      }),
     password: Yup.string()
       .required('Password is required')
       .min(8, 'Password must be at least 8 characters')
@@ -351,7 +359,7 @@ export default function LoginScreen({navigation}) {
     }
   };
 
-  const handleSumbitFun = async values => {
+  const handleSumbitFun = async (values, isUpdate = false) => {
     setIsLoading(true);
 
     try {
@@ -363,23 +371,38 @@ export default function LoginScreen({navigation}) {
           customer_pass: values.password,
         };
         const response = await loginPasswordFun(ApiReqData);
-
+        await AsyncStorage.setItem('iSlogin', 'true');
+        await AsyncStorage.setItem(
+          'customer_id',
+          '' + response.data.customer_id,
+        );
+        await AsyncStorage.setItem('token', response.data.token);
+        await AsyncStorage.setItem('is_logout', 'false');
         if (response && response.success) {
-          await AsyncStorage.setItem('iSlogin', 'true');
-          await AsyncStorage.setItem(
-            'customer_id',
-            '' + response.data.customer_id,
-          );
-          await AsyncStorage.setItem('token', response.data.token);
-          await AsyncStorage.setItem('is_logout', 'false');
-          await handleSubmitRedirectFun(response.data.customer_id);
-          getFCMToken();
-          Toast.show(response.message, {
-            type: 'custom_toast',
-            data: {
-              title: 'Success',
-            },
-          });
+          if (response.data.is_mobile_no_required === 1) {
+            setIsUpdateMobile(true);
+            Toast.show('Please verify your mobile number to continue', {
+              type: 'custom_toast',
+              data: {title: 'Error'},
+            });
+            setIsLoading(false);
+          } else {
+            await AsyncStorage.setItem('iSlogin', 'true');
+            await AsyncStorage.setItem(
+              'customer_id',
+              '' + response.data.customer_id,
+            );
+            await AsyncStorage.setItem('token', response.data.token);
+            await AsyncStorage.setItem('is_logout', 'false');
+            await handleSubmitRedirectFun(response.data.customer_id);
+            getFCMToken();
+            Toast.show(response.message, {
+              type: 'custom_toast',
+              data: {
+                title: 'Success',
+              },
+            });
+          }
         } else {
           setIsLoading(false);
           Toast.show(response.message, {
@@ -392,7 +415,9 @@ export default function LoginScreen({navigation}) {
       } else {
         // SEND OTP CODE
         try {
-          const ApiReqData = {customer_mobile_no: values.mobileNumber};
+          const ApiReqData = {
+            customer_mobile_no: values.mobileNumber,
+          };
           const response = await loginSendOtpFun(ApiReqData);
 
           if (response && response.success) {
@@ -461,34 +486,68 @@ export default function LoginScreen({navigation}) {
     return clearOtpResendCountDown;
   };
 
-  const verifyOtpFun = async values => {
+  const verifyOtpFun = async (values, isupdate = false) => {
     if (values.mobileNumber && values.otp) {
       setIsLoading(true);
       try {
-        const ApiReqData = {
-          customer_mobile_no: values.mobileNumber,
-          otp: parseInt(values.otp),
-        };
+        if (isupdate) {
+          const ApiReqData = {
+            customer_id: (await AsyncStorage.getItem('customer_id')) || '',
+            customer_mobile_no: values.mobileNumber,
+            otp: parseInt(values.otp),
+          };
 
-        const response = await loginOtpFun(ApiReqData);
+          console.log('ApiReqData', ApiReqData);
 
-        if (response && response.success) {
-          await AsyncStorage.setItem('iSlogin', 'true');
-          await AsyncStorage.setItem(
-            'customer_id',
-            '' + response.data.customer_id,
-          );
-          await AsyncStorage.setItem('token', '' + response.data.token);
-          await AsyncStorage.setItem('is_logout', 'false');
+          const response = await ProfileVerifyOtpFun(ApiReqData);
 
-          await handleSubmitRedirectFun(response.data.customer_id);
-          getFCMToken();
-          Toast.show(response.message, {
-            type: 'custom_toast',
-            data: {title: 'Success'},
-          });
+          if (response && response.success) {
+            await AsyncStorage.setItem('iSlogin', 'true');
+
+            const data = {
+              customer_id: await AsyncStorage.getItem('customer_id'),
+              customer_mobile_no: values.mobileNumber,
+            };
+
+            console.log('data', data);
+
+            await ProfileUpdateFun(data);
+
+            await handleSubmitRedirectFun(response.data.customer_id);
+            getFCMToken();
+            Toast.show(response.message, {
+              type: 'custom_toast',
+              data: {title: 'Success'},
+            });
+          } else {
+            throw new Error(response.message || 'An unexpected error occurred');
+          }
         } else {
-          throw new Error(response.message || 'An unexpected error occurred');
+          const ApiReqData = {
+            customer_mobile_no: values.mobileNumber,
+            otp: parseInt(values.otp),
+          };
+
+          const response = await loginOtpFun(ApiReqData);
+
+          if (response && response.success) {
+            await AsyncStorage.setItem('iSlogin', 'true');
+            await AsyncStorage.setItem(
+              'customer_id',
+              '' + response.data.customer_id,
+            );
+            await AsyncStorage.setItem('token', '' + response.data.token);
+            await AsyncStorage.setItem('is_logout', 'false');
+
+            await handleSubmitRedirectFun(response.data.customer_id);
+            getFCMToken();
+            Toast.show(response.message, {
+              type: 'custom_toast',
+              data: {title: 'Success'},
+            });
+          } else {
+            throw new Error(response.message || 'An unexpected error occurred');
+          }
         }
       } catch (error) {
         setIsLoading(false);
@@ -507,32 +566,58 @@ export default function LoginScreen({navigation}) {
     }
   };
 
-  const resendOtpFun = async values => {
+  const resendOtpFun = async (values, isUpdate = false) => {
     if (values.mobileNumber) {
       setIsLoading(true);
       try {
-        const ApiReqData = {customer_mobile_no: values.mobileNumber};
-        const response = await ReSendOtpService(ApiReqData);
+        if (isUpdate) {
+          const ApiReqData = {
+            customer_id: await AsyncStorage.getItem('customer_id'),
+            customer_mobile_no: values.mobileNumber,
+          };
+          const response = await ProfileOtpService(ApiReqData);
 
-        if (response && response.success) {
-          setOtpSent(true);
-          setIsLoading(false);
-          Toast.show(response.message, {
-            type: 'custom_toast',
-            data: {title: 'Success'},
-          });
-          otpResendCountFun();
+          if (response && response.success) {
+            setOtpSent(true);
+            setIsLoading(false);
+            Toast.show(response.message, {
+              type: 'custom_toast',
+              data: {title: 'Success'},
+            });
+            otpResendCountFun();
+          } else {
+            setOtpSent(false);
+            setIsLoading(false);
+            const errorMessage = 'Something went wrong, Please try again';
+            Toast.show(errorMessage, {
+              type: 'custom_toast',
+              data: {title: 'Error'},
+            });
+          }
         } else {
-          setOtpSent(false);
-          setIsLoading(false);
-          const errorMessage =
-            response.message === 'OTP data not found..!'
-              ? 'Invalid mobile number, Please enter a registered mobile number'
-              : response.message;
-          Toast.show(errorMessage, {
-            type: 'custom_toast',
-            data: {title: 'Error'},
-          });
+          const ApiReqData = {customer_mobile_no: values.mobileNumber};
+          const response = await ReSendOtpService(ApiReqData);
+
+          if (response && response.success) {
+            setOtpSent(true);
+            setIsLoading(false);
+            Toast.show(response.message, {
+              type: 'custom_toast',
+              data: {title: 'Success'},
+            });
+            otpResendCountFun();
+          } else {
+            setOtpSent(false);
+            setIsLoading(false);
+            const errorMessage =
+              response.message === 'OTP data not found..!'
+                ? 'Invalid mobile number, Please enter a registered mobile number'
+                : response.message;
+            Toast.show(errorMessage, {
+              type: 'custom_toast',
+              data: {title: 'Error'},
+            });
+          }
         }
       } catch (error) {
         console.error('Error sending OTP:', error);
@@ -544,6 +629,48 @@ export default function LoginScreen({navigation}) {
       }
     } else {
       Toast.show('Please enter mobile number', {
+        type: 'custom_toast',
+        data: {title: 'Error'},
+      });
+    }
+  };
+
+  const updateMobileFun = async values => {
+    console.log('updateMobileFun values', values.mobileNumber);
+
+    try {
+      const ApiReqData = {
+        customer_id: await AsyncStorage.getItem('customer_id'),
+        customer_mobile_no: values.mobileNumber,
+      };
+
+      const response = await ProfileSendOtpFun(ApiReqData);
+
+      if (response && response.success) {
+        setOtpSent(true);
+        setIsLoading(false);
+        Toast.show(response.message, {
+          type: 'custom_toast',
+          data: {title: 'Success'},
+        });
+        otpResendCountFun();
+      } else {
+        setOtpSent(false);
+        setIsLoading(false);
+        const errorMessage = 'Something went wrong, Please try againj';
+        Toast.show(errorMessage, {
+          type: 'custom_toast',
+          data: {title: 'Error'},
+        });
+        if (errorMessage === 'OTP already Send..!') {
+          otpResendCountFun();
+        }
+      }
+    } catch (error) {
+      setOtpSent(false);
+      setIsLoading(false);
+      console.error('Error sending OTP:', error);
+      Toast.show('Something went wrong. Please try again later.', {
         type: 'custom_toast',
         data: {title: 'Error'},
       });
@@ -659,9 +786,67 @@ export default function LoginScreen({navigation}) {
 
         {Loading({visible: isLoading})}
         {updateDialog()}
+        {updateMobileDialog()}
       </View>
     </KeyboardAvoidingView>
   );
+
+  function updateMobileDialog() {
+    return (
+      <Dialog
+        visible={isUpdateMobile}
+        onDismiss={() => {
+          setIsUpdateMobile(false);
+          setOtpSent(false);
+        }}>
+        <Dialog.Title className="text-center text-lg">
+          Please update your mobile number to continue
+        </Dialog.Title>
+        <Dialog.Content className="mt-2 items-center">
+          <Formik
+            onSubmit={updateMobileFun}
+            enableReinitialize={true}
+            initialValues={initialOtpValues}
+            validationSchema={otpValidationSchema}>
+            {({handleChange, handleSubmit, values, errors, touched}) => {
+              return (
+                <>
+                  {otpFields(values, handleChange, errors, touched)}
+
+                  {otpSent &&
+                    (otpResendCount > 0 ? (
+                      <Text
+                        variant="bodyLarge"
+                        className="text-center text-[#E31E24] mt-5">
+                        Resend OTP in {otpResendCount} seconds
+                      </Text>
+                    ) : (
+                      <Button
+                        mode="text"
+                        className="self-center mt-1"
+                        onPress={() => resendOtpFun(values)}>
+                        <Text variant="bodyLarge" className="text-[#6BB14F]">
+                          Didn’t get the OTP? Resend it
+                        </Text>
+                      </Button>
+                    ))}
+
+                  <Button
+                    mode="contained"
+                    className="w-60 mt-5 mb-2"
+                    onPress={
+                      otpSent ? () => verifyOtpFun(values, true) : handleSubmit
+                    }>
+                    {otpSent ? 'Verify' : 'Send OTP'}
+                  </Button>
+                </>
+              );
+            }}
+          </Formik>
+        </Dialog.Content>
+      </Dialog>
+    );
+  }
 
   function otpFields(values, handleChange, errors, touched) {
     return (
@@ -742,7 +927,7 @@ export default function LoginScreen({navigation}) {
         needsOffscreenAlphaCompositing
         className="items-center">
         <TextInput
-          label="Mobile Number"
+          label="Email or Mobile Number"
           mode="outlined"
           className="w-80 h-10"
           outlineStyle={{
@@ -756,7 +941,7 @@ export default function LoginScreen({navigation}) {
             shadowOpacity: 0.7,
             shadowRadius: 1.41,
           }}
-          keyboardType="numeric"
+          keyboardType="email-address"
           autoComplete="tel"
           value={values.mobileNo}
           onChangeText={handleChange('mobileNo')}
@@ -767,7 +952,6 @@ export default function LoginScreen({navigation}) {
               icon={() => <Image source={images.phone} className="w-5 h-5" />}
             />
           }
-          maxLength={10}
         />
 
         {errors.mobileNo && touched.mobileNo && (

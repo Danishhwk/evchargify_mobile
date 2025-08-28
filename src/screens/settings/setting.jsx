@@ -50,7 +50,7 @@ import {
   razorpayinitiateFun,
   razorpayUpdateFun,
 } from '../../services/wallet_service';
-import {RazorpayProductionKey} from '../../utils/constant';
+import {RazorpayProductionKey, RazorpayTestKey} from '../../utils/constant';
 import RazorpayCheckout from 'react-native-razorpay';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
@@ -454,7 +454,7 @@ export default function Setting({navigation}) {
           'https://thevchargify.com/wp-content/uploads/2024/12/ev_logo.png',
         currency: 'INR',
         name: 'EV Chargify',
-        key: RazorpayProductionKey,
+        key: RazorpayTestKey,
         order_id: order_id_temp,
         amount: '' + value.amount,
         theme: {color: '#6BB14F'},
@@ -480,9 +480,12 @@ export default function Setting({navigation}) {
           );
         })
         .catch(error => {
+          console.log('catch error', error);
+
           handleRazorpayError(error, order_id_temp);
         });
     } catch (error) {
+      console.log('handleOtpEditable error', error);
       handleError(error);
     } finally {
       setIsLoading(false);

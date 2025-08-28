@@ -50,6 +50,10 @@ if (__DEV__) {
   // imageUrl = 'http://stage.tritanev.com';
   // BaseUrlTransaction = 'http://stage.tritanev.com:3002/api/transaction';
 
+  // BaseUrl = 'http://prod.tritanev.com:3006/api/mobile';
+  // imageUrl = 'http://prod.tritanev.com:3006';
+  // BaseUrlTransaction = 'http://prod.tritanev.com:3002/api/transaction';
+
   BaseUrl = 'http://stage.thevchargify.com:3006/api/mobile';
   imageUrl = 'http://stage.thevchargify.com:3006';
   BaseUrlTransaction = 'http://stage.thevchargify.com:3002/api/transaction';

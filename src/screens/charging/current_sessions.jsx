@@ -19,6 +19,7 @@ import {useForeground} from 'react-native-google-mobile-ads';
 import {isIos} from '../../utils/helpers';
 import MyBannerAd from '../../utils/components/banner_ad';
 import {images} from '../../assets/images/images';
+import {FlashList} from '@shopify/flash-list';
 
 export default function CurrentSessions() {
   const navigation = useNavigation();
@@ -78,12 +79,12 @@ export default function CurrentSessions() {
           titleStyle={{textAlign: 'center'}}
         />
       </Appbar>
-      <FlatList
-        keyExtractor={item => item.id}
+      <FlashList
+        estimatedItemSize={155}
+        keyExtractor={item => item.transaction_id}
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={fetchData} />
         }
-        key={item => item.id}
         data={sessionData}
         ListEmptyComponent={
           <View className="flex-1 items-center justify-center mt-[50%] mx-5">
@@ -98,13 +99,13 @@ export default function CurrentSessions() {
             </Text>
           </View>
         }
-        renderItem={({item}) => {
+        renderItem={({item, index}) => {
           return (
             <Animated.View
               entering={FadeIn.duration(300).easing(Easing.linear)}
               exiting={FadeIn.duration(300).easing(Easing.linear)}
               needsOffscreenAlphaCompositing
-              key={item.id}
+              key={index}
               className={'p-3 w-fit'}>
               <View
                 className={`h-[36%] rounded-xl ${
@@ -144,20 +145,6 @@ export default function CurrentSessions() {
                     </Text>
                   </View>
                 </View>
-                {/* <TouchableRipple
-                  className="bg-[#6BB14F] flex-1 h-20 self-center rounded-xl items-center justify-center"
-                  onPress={() => {
-                    navigation.navigate('ChargingStatus', {
-                      type_route: item.charging_method_type,
-                      transaction_id_route: item.transaction_id,
-                      customer_id_route: item.customer_id,
-                      from_home: 1,
-                    });
-                  }}>
-                  <Text variant="titleMedium" className="text-white">
-                    View
-                  </Text>
-                </TouchableRipple> */}
 
                 <Button
                   className="my-2 mt-3"

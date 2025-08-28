@@ -114,7 +114,7 @@ export async function userSessionService(customer_id) {
 }
 
 export async function ReSendOtpService(data) {
-  const url = `${BaseUrl}/login/otp/resend`;
+  const url = `${BaseUrl}/customer/profile/otp_resend`;
 
   try {
     const response = await axios.post(url, data, {
@@ -134,5 +134,112 @@ export async function ReSendOtpService(data) {
   } catch (error) {
     console.error('ReSendOtpService error: ', error);
     throw error;
+  }
+}
+export async function ProfileOtpService(data) {
+  const url = `${BaseUrl}/customer/profile/otp_resend`;
+
+  try {
+    const response = await axios.post(url, data, {
+      headers: {'Content-Type': 'application/json'},
+    });
+
+    if (response.status === 200) {
+      console.log('ProfileOtpService response: ', response.data);
+      return response.data;
+    } else {
+      console.error(
+        'ProfileOtpService error: Unexpected status code',
+        response.status,
+      );
+      throw new Error(`Unexpected status code: ${response.status}`);
+    }
+  } catch (error) {
+    console.error('ProfileOtpService error: ', error);
+    throw error;
+  }
+}
+
+export async function ProfileSendOtpFun(profileData) {
+  const headers = {'Content-Type': 'application/json'};
+  const url = BaseUrl + '/customer/profile/otp_send';
+  console.log('url', url);
+  console.log('headers', headers);
+  console.log('profileData', profileData);
+
+  try {
+    const response = await axios.post(url, profileData, {headers});
+    // Check if the response status code indicates success
+    if (response.status === 200) {
+      console.log('ProfileSendOtpFun response: ', response.data);
+      return response.data;
+    } else {
+      // Handle other status codes (e.g., 400, 404, 500, etc.) here
+      console.log(
+        'ProfileSendOtpFun error: Unexpected status code',
+        response.status,
+      );
+      throw new Error('Unexpected status code: ' + response.status);
+    }
+  } catch (error) {
+    // Handle network errors or other exceptions
+    console.log('ProfileSendOtpFun error: ', error);
+    throw error; // Rethrow the error to be caught by the caller
+  }
+}
+
+export async function ProfileVerifyOtpFun(OtpData) {
+  const headers = {'Content-Type': 'application/json'};
+  const url = BaseUrl + '/customer/profile/otp_verify';
+  console.log('url', url);
+  console.log('headers', headers);
+  console.log('OtpData', OtpData);
+
+  try {
+    const response = await axios.post(url, OtpData, {headers});
+    // Check if the response status code indicates success
+    if (response.status === 200) {
+      console.log('ProfileVerifyOtpFun response: ', response.data);
+      return response.data;
+    } else {
+      // Handle other status codes (e.g., 400, 404, 500, etc.) here
+      console.log(
+        'ProfileVerifyOtpFun error: Unexpected status code',
+        response.status,
+      );
+      throw new Error('Unexpected status code: ' + response.status);
+    }
+  } catch (error) {
+    // Handle network errors or other exceptions
+    console.log('ProfileVerifyOtpFun error: ', error);
+    throw error; // Rethrow the error to be caught by the caller
+  }
+}
+
+export async function ProfileUpdateFun(data) {
+  const headers = {'Content-Type': 'application/json'};
+  const url = BaseUrl + '/customer/profile/update_mobile';
+  console.log('url', url);
+  console.log('headers', headers);
+  console.log('data', data);
+
+  try {
+    const response = await axios.post(url, data, {headers});
+    // Check if the response status code indicates success
+    if (response.status === 200) {
+      console.log('ProfileUpdateFun response: ', response.data);
+      return response.data;
+    } else {
+      // Handle other status codes (e.g., 400, 404, 500, etc.) here
+      console.log(
+        'ProfileUpdateFun error: Unexpected status code',
+        response.status,
+      );
+      throw new Error('Unexpected status code: ' + response.status);
+    }
+  } catch (error) {
+    // Handle network errors or other exceptions
+    console.log('ProfileUpdateFun error: ', error);
+    throw error; // Rethrow the error to be caught by the caller
   }
 }
