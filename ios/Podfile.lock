@@ -1046,6 +1046,12 @@ PODS:
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
+  - react-native-ssl-public-key-pinning (1.2.6):
+    - glog
+    - RCT-Folly (= 2022.05.16.00)
+    - React-Core
+    - React-RCTNetwork
+    - TrustKit
   - React-nativeconfig (0.73.4)
   - React-NativeModulesApple (0.73.4):
     - glog
@@ -1292,6 +1298,7 @@ PODS:
     - React-Core
   - SocketRocket (0.6.1)
   - TOCropViewController (2.7.4)
+  - TrustKit (3.0.7)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -1345,6 +1352,7 @@ DEPENDENCIES:
   - react-native-render-html (from `../node_modules/react-native-render-html`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
+  - react-native-ssl-public-key-pinning (from `../node_modules/react-native-ssl-public-key-pinning`)
   - React-nativeconfig (from `../node_modules/react-native/ReactCommon`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -1404,6 +1412,7 @@ SPEC REPOS:
     - razorpay-pod
     - SocketRocket
     - TOCropViewController
+    - TrustKit
 
 EXTERNAL SOURCES:
   boost:
@@ -1495,6 +1504,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-slider:
     :path: "../node_modules/@react-native-community/slider"
+  react-native-ssl-public-key-pinning:
+    :path: "../node_modules/react-native-ssl-public-key-pinning"
   React-nativeconfig:
     :path: "../node_modules/react-native/ReactCommon"
   React-NativeModulesApple:
@@ -1632,6 +1643,7 @@ SPEC CHECKSUMS:
   react-native-render-html: 984dfe2294163d04bf5fe25d7c9f122e60e05ebe
   react-native-safe-area-context: b97eb6f9e3b7f437806c2ce5983f479f8eb5de4b
   react-native-slider: 07df44a6b615c6bf8584a5ee88288024b3cbf498
+  react-native-ssl-public-key-pinning: 3b916091fe4d39f9d8eb048c7a4750903d450ea6
   React-nativeconfig: d7af5bae6da70fa15ce44f045621cf99ed24087c
   React-NativeModulesApple: 0123905d5699853ac68519607555a9a4f5c7b3ac
   React-perflogger: 8a1e1af5733004bdd91258dcefbde21e0d1faccd
@@ -1670,8 +1682,9 @@ SPEC CHECKSUMS:
   RNVectorIcons: 210f910e834e3485af40693ad4615c1ec22fc02b
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
+  TrustKit: 1050f3ce0595f8ed775f1237b7f590e3a4f93e91
   Yoga: 1b901a6d6eeba4e8a2e8f308f708691cdb5db312
 
-PODFILE CHECKSUM: fad93b5b13bf43bc83e3f27b15851dd468d2581a
+PODFILE CHECKSUM: f7f5f72fe743fd703126236f09a0ab8ced82dc66
 
 COCOAPODS: 1.15.2

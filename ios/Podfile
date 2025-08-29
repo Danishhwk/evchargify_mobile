@@ -64,7 +64,7 @@ if linkage != nil
   $RNFirebaseAsStaticFramework = true
 end
 
-target 'EV Dock' do
+target 'EVChargify' do
 
   config = use_native_modules!
   
@@ -93,7 +93,7 @@ target 'EV Dock' do
   pod 'react-native-blob-util',
     :path => '../node_modules/react-native-blob-util'
 
-  target 'EV DockTests' do
+  target 'EVChargifyTests' do
     inherit! :complete
     # Pods for testing
   end

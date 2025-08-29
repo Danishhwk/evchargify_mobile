@@ -1,6 +1,6 @@
 {
-  "name": "ev_dock",
-  "displayName": "ev_dock",
+  "name": "ev_chargify",
+  "displayName": "EV Chargify",
   "react-native-google-mobile-ads": {
     "android_app_id": "ca-app-pub-8848421759163585~5060595883",
     "ios_app_id": "ca-app-pub-8848421759163585~1353332894",
