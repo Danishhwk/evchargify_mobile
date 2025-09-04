@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "871392098318",
-    "project_id": "ev-dock-3e18b",
-    "storage_bucket": "ev-dock-3e18b.appspot.com"
+    "project_number": "862556519574",
+    "project_id": "ev-chargify",
+    "storage_bucket": "ev-chargify.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:871392098318:android:e47ff2b592074d31ae645f",
+        "mobilesdk_app_id": "1:862556519574:android:2a8c93d33d5f7ff870d6b7",
         "android_client_info": {
           "package_name": "com.evchargify"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAN7eZbBn3WCLNMupCR5bcmWWy3tauf1b4"
+          "current_key": "AIzaSyCx0sTOZC1cTefWGv6xvvqdbbjVIO2RzWw"
         }
       ],
       "services": {

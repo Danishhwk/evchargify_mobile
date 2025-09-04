@@ -584,7 +584,7 @@ export default function RegisterScreen({navigation}) {
                 borderless
                 className="rounded-full p-1"
                 onPress={async () => {
-                  await Linking.openURL('https://evdock.app/privacypolicy.html')
+                  await Linking.openURL('https://thevchargify.com')
                     .then(value => {})
                     .catch(e => {});
                 }}>

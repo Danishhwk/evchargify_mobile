@@ -346,7 +346,7 @@ export default function LoginScreen({navigation}) {
 
   const notificationAddFun = async fcmToken => {
     try {
-      const customer_id = await AsyncStorage.getItem('customer_id');
+      const customer_id = (await AsyncStorage.getItem('customer_id')) || '0';
       const device_platform = Platform.OS;
       const response = await notificationAddService(
         customer_id,

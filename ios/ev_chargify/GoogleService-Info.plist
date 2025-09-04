@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyDyilo8j5I-zezHGBvDp8eK-wR3lWrd1TE</string>
+	<string>AIzaSyCdmCIcN7Djq2rPrSGHzt-I4jHTXdEpHuI</string>
 	<key>GCM_SENDER_ID</key>
-	<string>871392098318</string>
+	<string>862556519574</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>app.evdock.evdock</string>
+	<string>com.evchargify</string>
 	<key>PROJECT_ID</key>
-	<string>ev-dock-3e18b</string>
+	<string>ev-chargify</string>
 	<key>STORAGE_BUCKET</key>
-	<string>ev-dock-3e18b.appspot.com</string>
+	<string>ev-chargify.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:871392098318:ios:98417d9489b4d155ae645f</string>
+	<string>1:862556519574:ios:4d529802d56c683870d6b7</string>
 </dict>
 </plist>
