@@ -7,6 +7,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Image,
   Keyboard,
+  KeyboardAvoidingView,
   Linking,
   Platform,
   useWindowDimensions,
@@ -132,6 +133,12 @@ export default function HomeScreen({navigation}) {
   const bannerRef = useRef(null);
   const [bannerLoaded, setBannerLoaded] = useState(false);
   const [utilityPoster, setUtilityPoster] = useState('');
+  const [energyDialog, setEnergyDialog] = useState(false);
+  const [values, setValues] = useState({
+    currentPercentage: 0,
+    batteryCapacity: 0,
+  });
+  const [requiredEnergy, setRequiredEnergy] = useState(0);
 
   useForeground(() => {
     isIos && bannerRef.current?.load();
@@ -541,102 +548,239 @@ export default function HomeScreen({navigation}) {
   }
 
   return (
-    <View className="flex-1">
-      <NetworkStatus />
-      <Surface mode="flat" className="flex-1 h-full self-stretch bg-[#E2EFD6]">
-        <View
-          style={{
-            width: '100%',
-            height: '99%',
-            overflow: 'hidden',
-            backgroundColor: 'white',
-            elevation: 2,
-            borderBottomStartRadius: 35,
-            borderBottomEndRadius: 35,
-            shadowColor: '#000',
-            shadowOffset: {
-              width: 0,
-              height: 1,
-            },
-            shadowOpacity: 0.2,
-            shadowRadius: 1.41,
-          }}>
-          {renderMapView()}
-        </View>
-        {renderHeader()}
-      </Surface>
+    <KeyboardAvoidingView
+      style={{flex: 1}}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <View className="flex-1">
+        <NetworkStatus />
+        <Surface
+          mode="flat"
+          className="flex-1 h-full self-stretch bg-[#E2EFD6]">
+          <View
+            style={{
+              width: '100%',
+              height: '99%',
+              overflow: 'hidden',
+              backgroundColor: 'white',
+              elevation: 2,
+              borderBottomStartRadius: 35,
+              borderBottomEndRadius: 35,
+              shadowColor: '#000',
+              shadowOffset: {
+                width: 0,
+                height: 1,
+              },
+              shadowOpacity: 0.2,
+              shadowRadius: 1.41,
+            }}>
+            {renderMapView()}
+          </View>
+          {renderHeader()}
+        </Surface>
 
-      {nearbyStationsList && nearbyStationsList.length > 0 && (
-        <Animated.ScrollView
-          entering={FadeInDown.duration(500).easing(Easing.linear)}
-          horizontal
-          style={{
-            position: 'absolute',
-            bottom: 25,
-            left: 15,
-            right: 15,
-          }}
-          showsHorizontalScrollIndicator={false}>
-          {nearbyStationsList.map((item, index) => {
-            return nearbyCard(item, index);
+        {nearbyStationsList && nearbyStationsList.length > 0 && (
+          <Animated.ScrollView
+            entering={FadeInDown.duration(500).easing(Easing.linear)}
+            horizontal
+            style={{
+              position: 'absolute',
+              bottom: 25,
+              left: 15,
+              right: 15,
+            }}
+            showsHorizontalScrollIndicator={false}>
+            {nearbyStationsList.map((item, index) => {
+              return nearbyCard(item, index);
+            })}
+          </Animated.ScrollView>
+        )}
+
+        {nearbyStationsList && nearbyStationsList.length === 0 && (
+          <Animated.View
+            entering={FadeInDown.duration(500).easing(Easing.linear)}
+            style={{
+              position: 'absolute',
+              bottom: 25,
+              left: 15,
+              right: 15,
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 10,
+              borderRadius: 12,
+              backgroundColor: '#ffffff',
+              zIndex: 1000,
+              shadowColor: '#6BB14F',
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+            }}>
+            <Text variant="bodyLarge" className="text-center text-[#6BB14F]">
+              No station found in your area with in {nearbyVal} km
+            </Text>
+          </Animated.View>
+        )}
+
+        {showStations &&
+          stationCard({
+            data: stationCardInfo,
+            distance: stationCardDistance,
+            style: {
+              position: 'absolute',
+              bottom: 18,
+              right: 20,
+              left: 20,
+              zIndex: 1000,
+              padding: 2,
+              borderRadius: 12,
+            },
+            navigation,
+            enterAnimation: SlideInDown.duration(300).easing(Easing.linear),
+            exitAnimation: SlideOutDown.duration(300).easing(Easing.linear),
           })}
-        </Animated.ScrollView>
-      )}
 
-      {nearbyStationsList && nearbyStationsList.length === 0 && (
-        <Animated.View
-          entering={FadeInDown.duration(500).easing(Easing.linear)}
-          style={{
-            position: 'absolute',
-            bottom: 25,
-            left: 15,
-            right: 15,
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 10,
-            borderRadius: 12,
-            backgroundColor: '#ffffff',
-            zIndex: 1000,
-            shadowColor: '#6BB14F',
-            shadowOffset: {
-              width: 0,
-              height: 2,
-            },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-          }}>
-          <Text variant="bodyLarge" className="text-center text-[#6BB14F]">
-            No station found in your area with in {nearbyVal} km
-          </Text>
-        </Animated.View>
-      )}
+        {isMapReady && footer()}
 
-      {showStations &&
-        stationCard({
-          data: stationCardInfo,
-          distance: stationCardDistance,
-          style: {
-            position: 'absolute',
-            bottom: 18,
-            right: 20,
-            left: 20,
-            zIndex: 1000,
-            padding: 2,
-            borderRadius: 12,
-          },
-          navigation,
-          enterAnimation: SlideInDown.duration(300).easing(Easing.linear),
-          exitAnimation: SlideOutDown.duration(300).easing(Easing.linear),
-        })}
-
-      {isMapReady && footer()}
-
-      {locDialog()}
-      {notificationDialog()}
-
-      {utilityPoster !== '' ? PosterModel() : <></>}
-    </View>
+        {locDialog()}
+        {notificationDialog()}
+        {energyCalculatorDialog()}
+        {utilityPoster !== '' ? PosterModel() : <></>}
+      </View>
+    </KeyboardAvoidingView>
   );
+
+  function energyCalculatorDialog() {
+    return (
+      <Dialog
+        visible={energyDialog}
+        onDismiss={() => {
+          setEnergyDialog(false);
+          setValues({currentPercentage: '', batteryCapacity: ''});
+          setRequiredEnergy(0);
+        }}>
+        <Text className="mx-5" variant="titleLarge">
+          Energy Calculator
+        </Text>
+        <Text className=" mx-5 my-2" variant="labelMedium">
+          Calculate estimate energy required to fully charge your vehicle
+        </Text>
+        <Dialog.Content>
+          <Animated.View
+            needsOffscreenAlphaCompositing
+            entering={FadeIn}
+            className="items-center w-full">
+            <TextInput
+              label="Enter Current Percentage (%)"
+              mode="outlined"
+              className="w-full h-10"
+              outlineStyle={{
+                elevation: 3,
+                borderRadius: 10,
+                shadowColor: '#6BB14F',
+                shadowOffset: {
+                  width: 0,
+                  height: 3,
+                },
+                shadowOpacity: 0.7,
+                shadowRadius: 1.41,
+              }}
+              keyboardType="numeric"
+              value={values.currentPercentage}
+              onChangeText={text => {
+                setValues({
+                  ...values,
+                  currentPercentage: Number(text),
+                });
+              }}
+            />
+
+            <View className="h-3" />
+
+            <TextInput
+              label="Enter Battery Capacity (kWh)"
+              value={values.batteryCapacity}
+              onChangeText={text => {
+                setValues({
+                  ...values,
+                  batteryCapacity: Number(text),
+                });
+              }}
+              keyboardType="numeric"
+              mode="outlined"
+              className="w-full h-10"
+              outlineStyle={{
+                elevation: 3,
+                borderRadius: 10,
+                shadowColor: '#6BB14F',
+                shadowOffset: {
+                  width: 0,
+                  height: 3,
+                },
+                shadowOpacity: 0.7,
+                shadowRadius: 1.41,
+              }}
+            />
+          </Animated.View>
+
+          {requiredEnergy > 0 && (
+            <Animated.View
+              needsOffscreenAlphaCompositing
+              entering={FadeIn}
+              className="items-center my-2">
+              <Text variant="bodyLarge" className="text-center text-[#6BB14F]">
+                The estimated energy required to fully charge your vehicle from{' '}
+                {values.currentPercentage}% to 100% is approximately{'\n'}
+                {requiredEnergy} kWh
+              </Text>
+            </Animated.View>
+          )}
+
+          <View className="flex-row w-full mt-3 items-center justify-between">
+            <Button
+              mode="elevated"
+              textColor="red"
+              className="w-[35%]"
+              onPress={() => {
+                setEnergyDialog(false);
+                setValues({currentPercentage: '', batteryCapacity: ''});
+                setRequiredEnergy(0);
+              }}>
+              Close
+            </Button>
+            <Button
+              mode="contained"
+              className="w-[60%]"
+              onPress={() => {
+                if (
+                  values.currentPercentage === 0 ||
+                  values.currentPercentage === '' ||
+                  values.batteryCapacity === 0 ||
+                  values.batteryCapacity === ''
+                ) {
+                  Toast.show('Please enter both current and battery capacity', {
+                    type: 'custom_toast',
+                    data: {
+                      title: 'Error',
+                    },
+                  });
+                } else {
+                  const calculation =
+                    (values.batteryCapacity *
+                      (100 - values.currentPercentage)) /
+                    100;
+
+                  setRequiredEnergy(calculation);
+                }
+              }}>
+              Calculate
+            </Button>
+          </View>
+        </Dialog.Content>
+      </Dialog>
+    );
+  }
 
   function notificationDialog() {
     return (
@@ -845,6 +989,17 @@ export default function HomeScreen({navigation}) {
             right: 20,
           },
         ]}>
+        <TouchableRipple
+          onPress={() => {
+            setEnergyDialog(true);
+          }}
+          className={` bg-[#6BB14F] h-12 w-12 rounded-2xl shadow-sm shadow-black justify-center items-center`}>
+          <Image
+            source={images.batteryEv}
+            className="w-7 h-7"
+            tintColor={'white'}
+          />
+        </TouchableRipple>
         <View className="h-4" />
 
         <TouchableRipple

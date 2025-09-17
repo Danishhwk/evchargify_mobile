@@ -22,6 +22,7 @@ import messaging from '@react-native-firebase/messaging';
 import notifee, {AndroidImportance} from '@notifee/react-native';
 import {navigationRef} from './src/utils/rootNavigation';
 import {initializeSslPinning} from 'react-native-ssl-public-key-pinning';
+import {BaseUrl} from './src/utils/constant';
 
 async function setupPinning() {
   try {
@@ -101,31 +102,31 @@ export default function App({navigation}) {
   const checkMaintenanceFun = async () => {
     console.log('######################checkMaintenanceFun');
     try {
-      let currentDt = currentDateTime();
+      const response = await fetch('https://google.com');
+      if (response.ok) {
+        console.log('ok is true');
 
-      let maintenance_alert_from_dt = await AsyncStorage.getItem(
-        'maintenance_alert_from_dt',
-      );
-      let maintenance_alert_to_dt = await AsyncStorage.getItem(
-        'maintenance_alert_to_dt',
-      );
+        const response2 = await fetch(BaseUrl);
+        console.log('response2', response2.ok);
 
-      let parsedFromDate = moment(
-        maintenance_alert_from_dt,
-        'YYYY-MM-DD HH:mm:ss',
-      );
-      let parsedToDate = moment(maintenance_alert_to_dt, 'YYYY-MM-DD HH:mm:ss');
-      let parsedCurrentDate = moment(currentDt, 'YYYY-MM-DD HH:mm:ss');
-
-      let isBetween = parsedCurrentDate.isBetween(parsedFromDate, parsedToDate);
-
-      if (isBetween) {
-        navigation.dispatch(StackActions.replace('MaintenanceScreen'));
-      } else {
-        await checkAppVersionFun();
+        if (!response2.ok) {
+          await checkAppVersionFun();
+        } else {
+          if (navigationRef.current.isReady()) {
+            navigationRef.current.dispatch(
+              StackActions.replace('MaintenanceScreen'),
+            );
+          }
+        }
       }
     } catch (error) {
-      console.error('Error trycatch checkMaintenanceFun:', error);
+      console.log('error', error);
+
+      if (navigationRef.current.isReady()) {
+        navigationRef.current.dispatch(
+          StackActions.replace('MaintenanceScreen'),
+        );
+      }
     }
   };
 
@@ -207,106 +208,7 @@ export default function App({navigation}) {
     }
   };
 
-  const fetchMobileSettingData = async () => {
-    try {
-      const response = await mobileSettingFun();
-
-      if (response && response.success) {
-        let last_updated = response.data.last_updated;
-
-        let last_updated_old = await AsyncStorage.getItem('last_updated_old');
-
-        let currentDt = currentDateTime();
-
-        if (!!last_updated) {
-          currentDt = moment(currentDt, 'YYYY-MM-DD HH:mm:ss');
-          last_updated = moment(last_updated, 'YYYY-MM-DD HH:mm:ss');
-
-          if (last_updated_old !== last_updated) {
-            await AsyncStorage.setItem(
-              'is_register_allow',
-              '' + response.data.is_register_allow,
-            );
-
-            await AsyncStorage.setItem(
-              'is_show_price_allow',
-              '' + response.data.is_show_price_allow,
-            );
-
-            await AsyncStorage.setItem(
-              'is_wallet_allow',
-              '' + response.data.is_wallet_allow,
-            );
-
-            await AsyncStorage.setItem(
-              'is_major_android_update',
-              '' + response.data.is_major_android_update,
-            );
-
-            await AsyncStorage.setItem(
-              'is_major_ios_update',
-              '' + response.data.is_major_ios_update,
-            );
-
-            await AsyncStorage.setItem(
-              'is_major_maintenance_alert_update',
-              '' + response.data.is_major_maintenance_alert_update,
-            );
-
-            await AsyncStorage.setItem(
-              'maintenance_alert_from_dt',
-              '' + response.data.maintenance_alert_from_dt,
-            );
-
-            await AsyncStorage.setItem(
-              'maintenance_alert_to_dt',
-              '' + response.data.maintenance_alert_to_dt,
-            );
-
-            await AsyncStorage.setItem(
-              'maintenance_alert_msg',
-              '' + response.data.maintenance_alert_msg,
-            );
-
-            await AsyncStorage.setItem(
-              'android_version',
-              '' + response.data.android_version,
-            );
-
-            await AsyncStorage.setItem(
-              'ios_version',
-              '' + response.data.ios_version,
-            );
-
-            await AsyncStorage.setItem(
-              'last_updated',
-              '' + response.data.last_updated,
-            );
-            await AsyncStorage.setItem(
-              'nearby_distance',
-              response.data.nearby_distance === undefined
-                ? '20'
-                : response.data.nearby_distance.toString(),
-            );
-          }
-
-          await checkMobileSetting();
-        }
-      } else {
-        Toast.show(response.message, {
-          type: 'custom_toast',
-          data: {title: 'Info'},
-        });
-        await checkMobileSetting();
-      }
-    } catch (error) {
-      console.error('Error trycatch fetchMobileSettingData:', error);
-    }
-  };
-
   useEffect(() => {
-    // fetchMobileSettingData();
-
     checkMobileSetting();
     return () => {
       console.log('App unmounted');

@@ -10,7 +10,7 @@ export default function ChargerInfoList({stationInfoData}) {
   const navigation = useNavigation();
 
   const chargerRender = useCallback(
-    item => {
+    (item, chargerPrice) => {
       const statuscheck = item.ocpp_status === 'Available';
       const chargingAllow = item.is_charging_allow != 1;
       const status = chargingAllow == false ? statuscheck : false;
@@ -90,12 +90,22 @@ export default function ChargerInfoList({stationInfoData}) {
             <View style={styles.separator} />
 
             <View style={styles.powerDetails}>
-              <Text variant="bodyLarge" className="text-[#6BB14F]">
-                Max. Power
-              </Text>
-              <Text variant="headlineSmall" className="text-[#6BB14F]">
-                {item.connector_power_kw} kW
-              </Text>
+              <View className="items-end">
+                <Text variant="bodyLarge" className="text-[#095587]">
+                  Max. Power
+                </Text>
+                <Text variant="headlineSmall" className="text-[#095587]">
+                  {item.connector_power_kw} kW
+                </Text>
+              </View>
+              <View className="items-end mt-1">
+                <Text variant="labelLarge" className="text-[#095587]">
+                  Price
+                </Text>
+                <Text variant="labelMedium" className="text-[#095587]">
+                  {chargerPrice} Rs/kWh
+                </Text>
+              </View>
             </View>
           </View>
 
@@ -200,7 +210,9 @@ export default function ChargerInfoList({stationInfoData}) {
             </View>
           </View>
           <View style={styles.connectorContainer}>
-            {item.connectors.map(chargerRender)}
+            {item.connectors.map(connectorItem =>
+              chargerRender(connectorItem, item.charger_charges),
+            )}
           </View>
         </View>
       ))}

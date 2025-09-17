@@ -3,6 +3,7 @@ export const images = {
   logobanner: require('./logo-banner.png'),
   logoPin: require('./logo-pin.png'),
   markerpin: require('./markerPin.png'),
+  batteryEv: require('./battery-ev.png'),
 
   // ONBOARDING IMAGES
   onboard1: require('./onBoard/onboard1.png'),

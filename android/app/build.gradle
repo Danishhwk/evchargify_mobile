@@ -89,8 +89,8 @@ android {
         applicationId "com.evchargify"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 8
-        versionName "2.0.5"
+        versionCode 9
+        versionName "2.0.6"
         missingDimensionStrategy 'react-native-camera', 'general'
     }
     signingConfigs {

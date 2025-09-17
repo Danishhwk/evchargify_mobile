@@ -1,7 +1,15 @@
 import {Rating} from '@kolking/react-native-rating';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {Image, Linking, Platform, ScrollView, Share, View} from 'react-native';
+import {
+  Image,
+  KeyboardAvoidingView,
+  Linking,
+  Platform,
+  ScrollView,
+  Share,
+  View,
+} from 'react-native';
 import {useForeground} from 'react-native-google-mobile-ads';
 import {
   ActivityIndicator,
@@ -12,6 +20,7 @@ import {
   IconButton,
   Surface,
   Text,
+  TextInput,
   TouchableRipple,
 } from 'react-native-paper';
 import Animated, {Easing, FadeIn} from 'react-native-reanimated';
@@ -55,6 +64,12 @@ const StationDetail = ({navigation, route}) => {
   const [showFailCheckDialog, setShowFailCheckDialog] = useState(false);
   const [chargerErrInfoData, setChargerErrInfoData] = useState([]);
   const [chargeErrDialog, setChargerErrDialog] = useState(false);
+  const [energyDialog, setEnergyDialog] = useState(false);
+  const [values, setValues] = useState({
+    currentPercentage: 0,
+    batteryCapacity: 0,
+  });
+  const [requiredEnergy, setRequiredEnergy] = useState(0);
 
   useForeground(() => {
     isIos && bannerRef.current?.load();
@@ -397,54 +412,203 @@ const StationDetail = ({navigation, route}) => {
   }
 
   return (
-    <Animated.View
-      needsOffscreenAlphaCompositing={true}
-      entering={FadeIn}
-      className="flex-1 h-full">
-      <LinearGradient
-        className={'flex-1'}
-        start={{x: 0, y: 0}}
-        end={{x: 0, y: 0.7}}
-        colors={['#6BB14F', '#F8F8F8']}>
-        <ScrollView style={{flex: 1}}>
-          {Header}
-          <SegmentedControl
-            tabs={tabs}
-            onChange={index => setSelectedIndex(index)}
-            value={selectedIndex}
-            initialIndex={3}
-            textStyle={{
-              fontSize: 14,
-              fontFamily: 'Exo2-Bold',
-              color: '#6BB14F',
-            }}
-            activeTabColor="#6BB14F"
-            activeTextColor="white"
-            tabStyle={{
-              height: 40,
-            }}
-            style={{
-              backgroundColor: 'transparent',
-              alignSelf: 'center',
-              marginTop: 15,
-            }}
-          />
-          {selectedIndex === 0 && <StepsInfo stationInfo={stationInfoData} />}
-          {selectedIndex === 1 && (
-            <StationInfo stationInfoData={stationInfoData} />
-          )}
-          {selectedIndex === 2 && (
-            <ChargerInfoList stationInfoData={stationInfoData} />
-          )}
-          {selectedIndex === 3 && (
-            <ReviewInfo stationId={station_id} reviewData={reviewData} />
-          )}
-        </ScrollView>
-        {failCheckDialog()}
-        {chargerInfoErrorDialog()}
-      </LinearGradient>
-    </Animated.View>
+    <KeyboardAvoidingView
+      style={{flex: 1}}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <Animated.View
+        needsOffscreenAlphaCompositing={true}
+        entering={FadeIn}
+        className="flex-1 h-full">
+        <LinearGradient
+          className={'flex-1'}
+          start={{x: 0, y: 0}}
+          end={{x: 0, y: 0.7}}
+          colors={['#6BB14F', '#F8F8F8']}>
+          <ScrollView style={{flex: 1}}>
+            {Header}
+            <SegmentedControl
+              tabs={tabs}
+              onChange={index => setSelectedIndex(index)}
+              value={selectedIndex}
+              initialIndex={3}
+              textStyle={{
+                fontSize: 14,
+                fontFamily: 'Exo2-Bold',
+                color: '#6BB14F',
+              }}
+              activeTabColor="#6BB14F"
+              activeTextColor="white"
+              tabStyle={{
+                height: 40,
+              }}
+              style={{
+                backgroundColor: 'transparent',
+                alignSelf: 'center',
+                marginTop: 15,
+              }}
+            />
+            {selectedIndex === 0 && <StepsInfo stationInfo={stationInfoData} />}
+            {selectedIndex === 1 && (
+              <StationInfo stationInfoData={stationInfoData} />
+            )}
+            {selectedIndex === 2 && (
+              <ChargerInfoList stationInfoData={stationInfoData} />
+            )}
+            {selectedIndex === 3 && (
+              <ReviewInfo stationId={station_id} reviewData={reviewData} />
+            )}
+          </ScrollView>
+          {failCheckDialog()}
+          {chargerInfoErrorDialog()}
+          {energyCalculatorDialog()}
+          <View className="absolute bottom-10 right-10">
+            <TouchableRipple
+              onPress={() => {
+                setEnergyDialog(true);
+              }}
+              className={` bg-[#6BB14F] h-12 w-12 rounded-2xl shadow-sm shadow-black justify-center items-center`}>
+              <Image
+                source={images.batteryEv}
+                className="w-7 h-7"
+                tintColor={'white'}
+              />
+            </TouchableRipple>
+          </View>
+        </LinearGradient>
+      </Animated.View>
+    </KeyboardAvoidingView>
   );
+
+  function energyCalculatorDialog() {
+    return (
+      <Dialog
+        visible={energyDialog}
+        onDismiss={() => {
+          setEnergyDialog(false);
+          setValues({currentPercentage: '', batteryCapacity: ''});
+          setRequiredEnergy(0);
+        }}>
+        <Text className="mx-5" variant="titleLarge">
+          Energy Calculator
+        </Text>
+        <Text className=" mx-5 my-2" variant="labelMedium">
+          Calculate estimate energy required to fully charge your vehicle
+        </Text>
+        <Dialog.Content>
+          <Animated.View
+            needsOffscreenAlphaCompositing
+            entering={FadeIn}
+            className="items-center w-full">
+            <TextInput
+              label="Enter Current Percentage (%)"
+              mode="outlined"
+              className="w-full h-10"
+              outlineStyle={{
+                elevation: 3,
+                borderRadius: 10,
+                shadowColor: '#6BB14F',
+                shadowOffset: {
+                  width: 0,
+                  height: 3,
+                },
+                shadowOpacity: 0.7,
+                shadowRadius: 1.41,
+              }}
+              keyboardType="numeric"
+              value={values.currentPercentage}
+              onChangeText={text => {
+                setValues({
+                  ...values,
+                  currentPercentage: Number(text),
+                });
+              }}
+            />
+
+            <View className="h-3" />
+
+            <TextInput
+              label="Enter Battery Capacity (kWh)"
+              value={values.batteryCapacity}
+              onChangeText={text => {
+                setValues({
+                  ...values,
+                  batteryCapacity: Number(text),
+                });
+              }}
+              keyboardType="numeric"
+              mode="outlined"
+              className="w-full h-10"
+              outlineStyle={{
+                elevation: 3,
+                borderRadius: 10,
+                shadowColor: '#6BB14F',
+                shadowOffset: {
+                  width: 0,
+                  height: 3,
+                },
+                shadowOpacity: 0.7,
+                shadowRadius: 1.41,
+              }}
+            />
+          </Animated.View>
+
+          {requiredEnergy > 0 && (
+            <Animated.View
+              needsOffscreenAlphaCompositing
+              entering={FadeIn}
+              className="items-center my-2">
+              <Text variant="bodyLarge" className="text-center text-[#6BB14F]">
+                The estimated energy required to fully charge your vehicle from{' '}
+                {values.currentPercentage}% to 100% is approximately{'\n'}
+                {requiredEnergy} kWh
+              </Text>
+            </Animated.View>
+          )}
+
+          <View className="flex-row w-full mt-3 items-center justify-between">
+            <Button
+              mode="elevated"
+              textColor="red"
+              className="w-[35%]"
+              onPress={() => {
+                setEnergyDialog(false);
+                setValues({currentPercentage: '', batteryCapacity: ''});
+                setRequiredEnergy(0);
+              }}>
+              Close
+            </Button>
+            <Button
+              mode="contained"
+              className="w-[60%]"
+              onPress={() => {
+                if (
+                  values.currentPercentage === 0 ||
+                  values.currentPercentage === '' ||
+                  values.batteryCapacity === 0 ||
+                  values.batteryCapacity === ''
+                ) {
+                  Toast.show('Please enter both current and battery capacity', {
+                    type: 'custom_toast',
+                    data: {
+                      title: 'Error',
+                    },
+                  });
+                } else {
+                  const calculation =
+                    (values.batteryCapacity *
+                      (100 - values.currentPercentage)) /
+                    100;
+
+                  setRequiredEnergy(calculation);
+                }
+              }}>
+              Calculate
+            </Button>
+          </View>
+        </Dialog.Content>
+      </Dialog>
+    );
+  }
 
   function chargerInfoErrorDialog() {
     return (

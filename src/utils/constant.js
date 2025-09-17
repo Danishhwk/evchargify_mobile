@@ -9,9 +9,9 @@ export let appSettingURl = 'http://goilkar.in:3006/api/mobile/app_setting';
 export let introUrl =
   'http://prod.tritanev.com:3006/uploads/mobile_instructionsandnote/mobile_instructionsandnote.pdf';
 // PAYMENT GATEWAY URL
-export const RazorpayKey = 'rzp_test_R8lQUGiEAkjbOw';
+export const RazorpayKey = 'rzp_live_RDRLafTwoe1qd7';
 export const RazorpayTestKey = 'rzp_test_R8lQUGiEAkjbOw';
-export const RazorpayProductionKey = 'rzp_test_R8lQUGiEAkjbOw';
+export const RazorpayProductionKey = 'rzp_live_RDRLafTwoe1qd7';
 
 // export const bannerAdUnitId = isIos
 //   ? 'ca-app-pub-8848421759163585/9364255675'
@@ -60,9 +60,9 @@ if (__DEV__) {
 } else {
   // PRODUCTION URLS
 
-  BaseUrl = 'http://stage.thevchargify.com:3006/api/mobile';
-  imageUrl = 'http://stage.thevchargify.com:3006';
-  BaseUrlTransaction = 'http://stage.thevchargify.com:3002/api/transaction';
+  BaseUrl = 'http://prod.thevchargify.com:3006/api/mobile';
+  imageUrl = 'http://prod.thevchargify.com:3006';
+  BaseUrlTransaction = 'http://prod.thevchargify.com:3002/api/transaction';
 
   /*   BaseUrl = 'http://prod.tritanev.com:3006/api/mobile';
   imageUrl = 'http://prod.tritanev.com:3006';

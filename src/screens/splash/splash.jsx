@@ -10,16 +10,50 @@ import {userSessionService} from '../../services/login_service';
 import {Toast} from 'react-native-toast-notifications';
 import {isRewardEnableService} from '../../services/reward_service';
 import NetInfo from '@react-native-community/netinfo';
+import {navigationRef} from '../../utils/rootNavigation';
+import {BaseUrl} from '../../utils/constant';
 
 const SplashScreen = ({navigation}) => {
   useEffect(() => {
-    // checkOnboarding();
-    getFCMToken();
-    checkReward();
-    setTimeout(() => {
-      checkUserSession();
-    }, 20);
+    checkMaintenanceFun();
   }, []);
+
+  const checkMaintenanceFun = async () => {
+    console.log('Checking Maintenance...');
+    try {
+      const response = await fetch('https://google.com');
+      // console.log('response', response.ok);
+
+      if (response.ok) {
+        // console.log('ok is true');
+
+        const response2 = await fetch(BaseUrl);
+        console.log('response2', response2.ok);
+
+        if (!response2.ok) {
+          getFCMToken();
+          checkReward();
+          setTimeout(() => {
+            checkUserSession();
+          }, 20);
+        } else {
+          if (navigationRef.current.isReady()) {
+            navigationRef.current.dispatch(
+              StackActions.replace('MaintenanceScreen'),
+            );
+          }
+        }
+      }
+    } catch (error) {
+      console.log('error', error);
+
+      if (navigationRef.current.isReady()) {
+        navigationRef.current.dispatch(
+          StackActions.replace('MaintenanceScreen'),
+        );
+      }
+    }
+  };
 
   const checkReward = async () => {
     try {
