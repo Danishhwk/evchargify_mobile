@@ -46,17 +46,13 @@ if (__DEV__) {
 if (__DEV__) {
   // DEVELOPMENT BASE URL
 
-  // BaseUrl = 'https://stage.tritanev.com/mobile/api';
-  // imageUrl = 'http://stage.tritanev.com';
-  // BaseUrlTransaction = 'http://stage.tritanev.com:3002/api/transaction';
+  // BaseUrl = 'http://stage.thevchargify.com:3006/api/mobile';
+  // imageUrl = 'http://stage.thevchargify.com:3006';
+  // BaseUrlTransaction = 'http://stage.thevchargify.com:3002/api/transaction';
 
-  // BaseUrl = 'http://prod.tritanev.com:3006/api/mobile';
-  // imageUrl = 'http://prod.tritanev.com:3006';
-  // BaseUrlTransaction = 'http://prod.tritanev.com:3002/api/transaction';
-
-  BaseUrl = 'http://stage.thevchargify.com:3006/api/mobile';
-  imageUrl = 'http://stage.thevchargify.com:3006';
-  BaseUrlTransaction = 'http://stage.thevchargify.com:3002/api/transaction';
+  BaseUrl = 'http://prod.thevchargify.com:3006/api/mobile';
+  imageUrl = 'http://prod.thevchargify.com:3006';
+  BaseUrlTransaction = 'http://prod.thevchargify.com:3002/api/transaction';
 } else {
   // PRODUCTION URLS
 
