@@ -74,14 +74,7 @@
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
-			<key>goilkar.in</key>
-			<dict>
-				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-				<key>NSTemporaryExceptionMinimumTLSVersion</key>
-				<string>TLSv1.1</string>
-			</dict>
-			<key>prod.tritanev.com</key>
+			<key>prod.thevchargify.com</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
@@ -94,13 +87,6 @@
 				<true/>
 				<key>NSIncludesSubdomains</key>
 				<true/>
-			</dict>
-			<key>stage.tritanev.com</key>
-			<dict>
-				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-				<key>NSTemporaryExceptionMinimumTLSVersion</key>
-				<string>TLSv1.1</string>
 			</dict>
 		</dict>
 	</dict>
