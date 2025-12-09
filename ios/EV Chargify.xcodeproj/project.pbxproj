@@ -663,7 +663,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_HEADERS_RUN_UNIFDEF = NO;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 5D4JAD68YC;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = ev_chargify/Info.plist;
@@ -708,7 +708,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_HEADERS_RUN_UNIFDEF = NO;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 5D4JAD68YC;
 				INFOPLIST_FILE = ev_chargify/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "EV Chargify";

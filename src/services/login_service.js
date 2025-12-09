@@ -114,7 +114,10 @@ export async function userSessionService(customer_id) {
 }
 
 export async function ReSendOtpService(data) {
-  const url = `${BaseUrl}/customer/profile/otp_resend`;
+  const url = `${BaseUrl}/login/otp/resend`;
+
+  console.log('url: ', url);
+  console.log('');
 
   try {
     const response = await axios.post(url, data, {

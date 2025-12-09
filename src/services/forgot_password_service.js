@@ -35,6 +35,32 @@ export async function forgotPasswordOtpSendFun(forgotPasswordOtpSendData) {
   }
 }
 
+export async function ForgotReSendOtpService(data) {
+  const url = `${BaseUrl}/forgot_password/otp/resend`;
+
+  console.log('url: ', url);
+
+  try {
+    const response = await axios.post(url, data, {
+      headers: {'Content-Type': 'application/json'},
+    });
+
+    if (response.status === 200) {
+      console.log('ReSendOtpService response: ', response.data);
+      return response.data;
+    } else {
+      console.error(
+        'ReSendOtpService error: Unexpected status code',
+        response.status,
+      );
+      throw new Error(`Unexpected status code: ${response.status}`);
+    }
+  } catch (error) {
+    console.error('ReSendOtpService error: ', error);
+    throw error;
+  }
+}
+
 export async function forgotPasswordOtpVerifyFun(forgotPasswordOtpVerifyData) {
   const url = BaseUrl + '/forgot_password/otp/verify';
   const token = await getToken();

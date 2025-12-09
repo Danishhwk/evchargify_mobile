@@ -824,7 +824,7 @@ export default function LoginScreen({navigation}) {
                       <Button
                         mode="text"
                         className="self-center mt-1"
-                        onPress={() => resendOtpFun(values)}>
+                        onPress={() => resendOtpFun(values, true)}>
                         <Text variant="bodyLarge" className="text-[#6BB14F]">
                           Didn’t get the OTP? Resend it
                         </Text>

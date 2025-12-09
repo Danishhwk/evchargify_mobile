@@ -10,6 +10,7 @@ import OTPTextInput from 'react-native-otp-textinput';
 import {
   forgotPasswordOtpSendFun,
   forgotPasswordOtpVerifyFun,
+  ForgotReSendOtpService,
 } from '../../services/forgot_password_service';
 import {Toast} from 'react-native-toast-notifications';
 import Loading from '../../utils/components/loading';
@@ -148,7 +149,7 @@ export default function ForgotPasswordScreen({navigation}) {
       setIsLoading(true);
       try {
         const ApiReqData = {customer_mobile_no: values.mobileNumber};
-        const response = await ReSendOtpService(ApiReqData);
+        const response = await ForgotReSendOtpService(ApiReqData);
 
         if (response && response.success) {
           setOtpSent(true);
