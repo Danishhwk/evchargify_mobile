@@ -18,6 +18,7 @@ import {images} from '../../assets/images/images';
 import {ocpiStationInfoFun} from '../../services/station_service';
 import MyBannerAd from '../../utils/components/banner_ad';
 import {isIos} from '../../utils/helpers';
+import {partnerChargerNote} from '../../utils/constant';
 
 const OcpiStationDetail = ({navigation, route}) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -128,7 +129,7 @@ const OcpiStationDetail = ({navigation, route}) => {
       const result = await Share.share({
         message: `${stationInfoData.station_name} \n\n ${address} \n\n https://www.google.com/maps/search/?api=1&query=${latLong}`,
         url: `https://www.google.com/maps/search/?api=1&query=${latLong}`,
-        title: 'EV Chargify APP',
+        title: 'EV DOCK APP',
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
@@ -228,6 +229,20 @@ const OcpiStationDetail = ({navigation, route}) => {
               {stationInfoData.mst_emsp_name}
             </Text>
           </View>
+          <View className="flex-1 w-full border border-red-300 p-2 mt-2 rounded-md">
+            {partnerChargerNote.map((noteItem, index) => (
+              <Text
+                key={index}
+                variant={noteItem.title ? 'titleSmall' : 'labelMedium'}
+                className={noteItem.title ? 'font-bold mb-1' : 'mb-0.5'}>
+                {noteItem.title ||
+                  noteItem.value1 ||
+                  noteItem.value2 ||
+                  noteItem.value3 ||
+                  noteItem.value4}
+              </Text>
+            ))}
+          </View>
           <Divider className="mt-4" bold />
         </View>
       </View>
@@ -244,6 +259,12 @@ const OcpiStationDetail = ({navigation, route}) => {
 
   return (
     <View className="flex-1">
+      <MyBannerAd
+        height={50}
+        bannerRef={bannerRef}
+        setBannerLoaded={setBannerLoaded}
+        bannerLoaded={bannerLoaded}
+      />
       <Animated.ScrollView
         needsOffscreenAlphaCompositing={true}
         entering={FadeIn}
@@ -305,7 +326,7 @@ const OcpiStationDetail = ({navigation, route}) => {
                       gun_type: chargerItem.physical_reference,
                     };
 
-                    navigation.navigate('ChargerInfo', data);
+                    navigation.navigate('OcpiChargerInfo', data);
                   }}>
                   <Card.Content>
                     <View
@@ -350,7 +371,10 @@ const OcpiStationDetail = ({navigation, route}) => {
                         marginTop: 4,
                       }}>
                       <Text variant="bodyLarge" className="text-[#6BB14F]">
-                        {connectorType} - {chargerItem.physical_reference}
+                        {connectorType} - {connectorItem.ocpi_connector_id}
+                        {chargerItem.physical_reference != null
+                          ? ` (${chargerItem.physical_reference})`
+                          : ''}
                       </Text>
                       <Image
                         source={connectorImage}
@@ -379,7 +403,7 @@ const OcpiStationDetail = ({navigation, route}) => {
                           gun_type: chargerItem.physical_reference,
                         };
 
-                        navigation.navigate('ChargerInfo', data);
+                        navigation.navigate('OcpiChargerInfo', data);
                       }}
                       className={'mt-4'}
                       mode="contained">

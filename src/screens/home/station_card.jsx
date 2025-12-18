@@ -47,6 +47,10 @@ export function stationCard({
     ',' +
     data['pin_code'];
 
+  const ocpiFormatAddress = data => {
+    return `${data.station_address_one}, ${data.city_name},  ${data.state_name}, ${data.country_name}, ${data.pin_code}`;
+  };
+
   const latLong = data['station_lat'] + ',' + data['station_long'];
 
   //const chargers = data['chargers'];
@@ -126,7 +130,9 @@ export function stationCard({
                       className="text-[#79747E]"
                       ellipsizeMode="tail"
                       numberOfLines={4}>
-                      {address}
+                      {data['is_ocpi'] === 1
+                        ? ocpiFormatAddress(data)
+                        : address}
                     </Text>
                   </View>
                   <TouchableRipple
@@ -173,14 +179,15 @@ export function stationCard({
                           : 'Public'}
                       </Text>
                     </View>
-
-                    <View className="bg-[#6BB14F] rounded-lg mr-2">
-                      <Text
-                        variant="titleSmall"
-                        className="text-white p-1 px-2">
-                        {data.charger_type}
-                      </Text>
-                    </View>
+                    {data['is_ocpi'] === 1 ? null : (
+                      <View className="bg-[#6BB14F] rounded-lg mr-2">
+                        <Text
+                          variant="titleSmall"
+                          className="text-white p-1 px-2">
+                          {data.charger_type}
+                        </Text>
+                      </View>
+                    )}
 
                     <View className="flex-row items-center">
                       <Image source={images.map_pin} className="w-6 h-6" />

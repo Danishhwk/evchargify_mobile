@@ -50,9 +50,13 @@ if (__DEV__) {
   // imageUrl = 'http://stage.thevchargify.com:3006';
   // BaseUrlTransaction = 'http://stage.thevchargify.com:3002/api/transaction';
 
-  BaseUrl = 'http://prod.thevchargify.com:3006/api/mobile';
-  imageUrl = 'http://prod.thevchargify.com:3006';
-  BaseUrlTransaction = 'http://prod.thevchargify.com:3002/api/transaction';
+  BaseUrl = 'http://prod.tritanev.com:3006/api/mobile';
+  imageUrl = 'http://prod.tritanev.com:3006';
+  BaseUrlTransaction = 'http://prod.tritanev.com:3002/api/transaction';
+
+  // BaseUrl = 'http://prod.thevchargify.com:3006/api/mobile';
+  // imageUrl = 'http://prod.thevchargify.com:3006';
+  // BaseUrlTransaction = 'http://prod.thevchargify.com:3002/api/transaction';
 } else {
   // PRODUCTION URLS
 
@@ -76,3 +80,14 @@ export const guideTextTime =
   'Select the correct charger (AC or DC) and gun (GUN A or GUN B), enter the charging time.';
 export const guideTextEnergy =
   'Select the correct charger (AC or DC) and gun (GUN A or GUN B), enter the energy (unit).';
+
+export const partnerChargerNote = [
+  {title: 'Partner Charger Notice'},
+  {value1: 'This charger is operated by our partner (EMSP).'},
+  {value2: 'EV Chargify has limited control over this charger.'},
+  {
+    value3:
+      'If you face any issues, refunds (if applicable) will be credited to your EV Chargify wallet and may take some time to process.',
+  },
+  {value4: 'Thank you for using our partner network.'},
+];

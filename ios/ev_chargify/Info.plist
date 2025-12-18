@@ -81,6 +81,13 @@
 				<key>NSIncludesSubdomains</key>
 				<true/>
 			</dict>
+			<key>prod.tritanev.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
 			<key>stage.thevchargify.com</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>

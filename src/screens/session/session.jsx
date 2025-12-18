@@ -117,7 +117,15 @@ export default function Session({navigation}) {
         className="flex-1 w-full px-3 mt-4 items-center">
         <Card
           onPress={() => {
-            navigation.navigate('SessionDetail', {id: item.transaction_id});
+            if (item.is_ocpi == 1) {
+              navigation.navigate('OcpiSessionDetail', {
+                id: item.transaction_id,
+              });
+              return;
+            } else {
+              navigation.navigate('SessionDetail', {id: item.transaction_id});
+              return;
+            }
           }}
           elevation={1}
           className="w-full bg-white">

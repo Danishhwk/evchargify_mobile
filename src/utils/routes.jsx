@@ -51,6 +51,9 @@ import {isRewardEnableService} from '../services/reward_service';
 import ApiErrorScreen from '../screens/error/api_error';
 import StationDetail1 from '../screens/stationDetail/ocpi_station_detail';
 import OcpiStationDetail from '../screens/stationDetail/ocpi_station_detail';
+import OcpiChargerInfo from '../screens/charging/ocpi_charging_info';
+import OcpiChargingStatus from '../screens/charging/ocpi_charging_status';
+import OcpiSessionDetail from '../screens/session/ocpi_session_detail';
 
 const Stack = createNativeStackNavigator();
 
@@ -128,6 +131,8 @@ export default function StackRoutes() {
       <Stack.Screen name="StationDetail" component={StationDetail} />
       <Stack.Screen name="OcpiStationDetail" component={OcpiStationDetail} />
       <Stack.Screen name="ChargerInfo" component={ChargerInfo} />
+      <Stack.Screen name="OcpiChargerInfo" component={OcpiChargerInfo} />
+      <Stack.Screen name="OcpiChargingStatus" component={OcpiChargingStatus} />
       <Stack.Screen
         name="ChargingStatus"
         component={ChargingStatus}
@@ -144,6 +149,7 @@ export default function StackRoutes() {
       <Stack.Screen name="Wallet" component={Wallet} />
       <Stack.Screen name="Subscription" component={Subscription} />
       <Stack.Screen name="Session" component={Session} />
+      <Stack.Screen name="OcpiSessionDetail" component={OcpiSessionDetail} />
       <Stack.Screen name="Delete" component={Delete} />
       <Stack.Screen name="PasswordVerify" component={PasswordVerify} />
       <Stack.Screen name="ChangePassword" component={ChangePassword} />
